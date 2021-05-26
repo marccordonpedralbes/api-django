@@ -1,0 +1,70 @@
+version: "3"
+
+volumes:
+  staging_postgres_data: {}
+  staging_postgres_data_backups: {}
+  nginx_static_files: {}
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/staging/Dockerfile
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    env_file:
+      - ./.envs/.staging/.django
+      - ./.envs/.staging/.postgres
+    command: /start
+    depends_on:
+      - redis
+      
+  nginx:
+    image: nginx:1.19-alpine
+    volumes:
+      - ./compose/staging/nginx:/etc/nginx/conf.d
+      - nginx_static_files:/app/staticfiles
+    ports:
+      - 80:80
+    depends_on:
+      - django
+
+  postgres:
+    image: postgres:12-alpine
+    volumes:
+      - staging_postgres_data:/var/lib/postgresql/data
+      - staging_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.staging/.postgres
+  redis:
+    image: redis:6-alpine
+    
+  stripecli:
+    image: stripe/stripe-cli:latest
+    network_mode: host
+    command: listen --api-key sk_test_51IZy28Dieqyg7vAImOKb5hg7amYYGSzPTtSqoT9RKI69VyycnqXV3wCPANyYHEl2hI7KLHHAeIPpC7POg7I4WMwi00TSn067f4 --events invoice.payment_succeeded  --forward-to http://localhost:80/api/users/stripe_webhooks_invoice_payment_succeeded/
+
+  channels:
+    <<: *django
+    image: freelanium_channels
+    command: daphne -b 0.0.0.0 -p 8001 config.asgi:application
+    ports:
+      - 8001:8001
+
+  celeryworker:
+    <<: *django
+    image: freelanium_staging_celeryworker
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: freelanium_staging_celerybeat
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: freelanium_staging_flower
+    ports:
+      - "5555:5555"
+    command: /start-flower

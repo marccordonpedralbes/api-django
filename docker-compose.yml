@@ -1,0 +1,64 @@
+version: "3"
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/dev/Dockerfile
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - "8000:8000"
+    command: /start
+    depends_on:
+      - redis
+  postgres:
+    image: postgres:12-alpine
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
+
+  redis:
+    image: redis:6-alpine
+
+  stripecli:
+    image: stripe/stripe-cli:latest
+    network_mode: host
+    command: listen --api-key sk_test_51IZy28Dieqyg7vAImOKb5hg7amYYGSzPTtSqoT9RKI69VyycnqXV3wCPANyYHEl2hI7KLHHAeIPpC7POg7I4WMwi00TSn067f4 --events invoice.payment_succeeded  --forward-to http://localhost:8000/api/users/stripe_webhooks_invoice_payment_succeeded/
+
+  celeryworker:
+    <<: *django
+    image: freelanium_local_celeryworker
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: freelanium_local_celerybeat
+    depends_on:
+      - redis
+      - postgres
+
+    ports: []
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: freelanium_local_flower
+    ports:
+      - "5555:5555"
+    command: /start-flower
