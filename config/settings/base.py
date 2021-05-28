@@ -29,7 +29,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=True)
 
 ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['localhost'])
-CORS_ALLOWED_ORIGINS = ["https://precognis.com"]
+CORS_ALLOWED_ORIGINS = ["178.62.208.166"]
 
 if DEBUG:
     ALLOWED_HOSTS.append("localhost")
