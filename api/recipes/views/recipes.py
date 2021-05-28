@@ -4,6 +4,9 @@ import uuid
 
 from rest_framework import viewsets, mixins
 from django.http import HttpResponse
+
+from rest_framework.response import Response
+from rest_framework import status
 # Permissions
 from rest_framework.permissions import (
     AllowAny,
@@ -44,3 +47,13 @@ class RecipeViewSet(mixins.CreateModelMixin,
 
     def get_queryset(self):
         return Recipe.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        ingredientes = []
+        if 'ingredientes' in request.data:
+            ingredientes = request.data['ingredientes']
+        serializer = RecipeModelSerializer(data=request.data, context={'ingredientes':ingredientes})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

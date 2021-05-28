@@ -9,7 +9,8 @@ class Recipe(models.Model):
     descripcion = models.TextField(null=True, blank=True, verbose_name='Descripción')
     duracion = models.FloatField(null=True, blank=True, verbose_name='Duracion de la preparacion')
     dificultad = models.CharField(max_length=150, null=True, blank=True, verbose_name='Dificultad de la receta')
-    ingredientes = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Ingredientes')
+    ingredientes = models.ManyToManyField('products.Product', blank=True, related_name='Ingredientes')
+
     def __str__(self):
         return str(self.nombre)
 

@@ -53,12 +53,12 @@ def send_feedback_email(user, message):
     subject = 'Feedback from @{}'.format(
         user.email)
 
-    from_email = 'Freelanium <no-reply@freelanium.com>'
+    from_email = 'precognis <no-reply@precognis.com>'
     content = render_to_string(
         'emails/users/feedback_email.html',
         {'user': user, 'message': message}
     )
-    recipient_list = ["iherms@freelanium.com", "freelanium@gmail.com"]
+    recipient_list = ["iherms@precognis.com", "precognis@gmail.com"]
 
     messages = [(subject, content, from_email, [recipient])
                 for recipient in recipient_list]
@@ -71,9 +71,9 @@ def send_confirmation_email(user):
     """Send account verification link to given user."""
 
     verification_token = helpers.gen_verification_token(user)
-    subject = 'Welcome @{}! Verify your account to start using Freelanium'.format(
+    subject = 'Welcome @{}! Verify your account to start using precognis'.format(
         user.username)
-    from_email = 'Freelanium <no-reply@freelanium.com>'
+    from_email = 'precognis <no-reply@precognis.com>'
     content = render_to_string(
         'emails/users/account_verification.html',
         {'token': verification_token, 'user': user}
@@ -90,7 +90,7 @@ def send_change_email_email(user, new_email):
     verification_token = helpers.gen_new_email_token(user, new_email)
     subject = 'Welcome @{}! Change your email'.format(
         user.username)
-    from_email = 'Freelanium <no-reply@freelanium.com>'
+    from_email = 'precognis <no-reply@precognis.com>'
     content = render_to_string(
         'emails/users/change_email.html',
         {'token': verification_token, 'user': user}
@@ -107,7 +107,7 @@ def send_reset_password_email(user_email):
     verification_token = helpers.gen_verification_token(user)
 
     subject = 'Reset your password'
-    from_email = 'Freelanium <no-reply@freelanium.com>'
+    from_email = 'precognis <no-reply@precognis.com>'
     content = render_to_string(
         'emails/users/reset_password.html',
         {'token': verification_token, 'user': user}
@@ -124,7 +124,7 @@ def send_invitation_email(user, email, message, type):
     verification_token = helpers.get_invitation_token(user, email)
     subject = 'Welcome! @{} has invited you '.format(
         user.username)
-    from_email = 'Freelanium <no-reply@freelanium.com>'
+    from_email = 'precognis <no-reply@precognis.com>'
     content = render_to_string(
         'emails/users/user_invitation.html',
         {'token': verification_token, 'user': user, 'message': message, 'type': type}
@@ -134,26 +134,26 @@ def send_invitation_email(user, email, message, type):
     msg.send()
 
 
-@task(name='send_offer', max_retries=3)
-def send_offer(user, email, user_exists, offer_id, buyer_id=None):
+#@task(name='send_offer', max_retries=3)
+#def send_offer(user, email, user_exists, offer_id, buyer_id=None):
     """Send account verification link to given user."""
-    user_token = None
-    verification_token = None
+#    user_token = None
+#    verification_token = None
 
-    if user_exists:
-        verification_token = helpers.get_user_token(buyer_id)
+#    if user_exists:
+#        verification_token = helpers.get_user_token(buyer_id)
 
-    subject = '@{} sent you an offer '.format(
-        user.username)
-    from_email = 'Freelanium <no-reply@freelanium.com>'
-
-    content = render_to_string(
-        'emails/users/order_offer.html',
-        {'token': verification_token, 'user': user, 'user_exists': user_exists, 'offer': offer_id}
-    )
-    msg = EmailMultiAlternatives(subject, content, from_email, [email])
-    msg.attach_alternative(content, "text/html")
-    msg.send()
+#    subject = '@{} sent you an offer '.format(
+#        user.username)
+#    from_email = 'precognis <no-reply@precognis.com>'
+#
+#    content = render_to_string(
+#        'emails/users/order_offer.html',
+#        {'token': verification_token, 'user': user, 'user_exists': user_exists, 'offer': offer_id}
+#    )
+#    msg = EmailMultiAlternatives(subject, content, from_email, [email])
+#    msg.attach_alternative(content, "text/html")
+#    msg.send()
 
 
 # @task(name='check_if_free_trial_have_ended')
@@ -181,7 +181,7 @@ def send_have_messages_from_email(sent_to, sent_by):
     subject = 'New messages from @{}'.format(
         sent_by.username)
 
-    from_email = 'Freelanium <no-reply@freelanium.com>'
+    from_email = 'precognis <no-reply@precognis.com>'
     content = render_to_string(
         'emails/users/new_messages.html',
         {'user': sent_by}
@@ -280,7 +280,7 @@ def send_activity_notification(activity, type):
         ), sent_by.email, '@{} has not accepted the cancelation '.format(
             issued_by.username)
 
-    from_email = 'Freelanium <no-reply@freelanium.com>'
+    from_email = 'precognis <no-reply@precognis.com>'
 
     switcher = {
         Activity.OFFER+OfferActivity.ACCEPTED: offer_accepted_email,
