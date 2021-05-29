@@ -83,8 +83,6 @@ INSTALLED_APPS = [
     "channels",
     "channels_redis",
     "corsheaders",
-    "djmoney",
-    "djmoney.contrib.exchange",
 ]
 
 MIDDLEWARE = [

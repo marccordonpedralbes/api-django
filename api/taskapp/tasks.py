@@ -9,18 +9,14 @@ from django.utils.module_loading import import_string
 
 # Models
 from api.users.models import User
-from rest_framework.authtoken.models import Token
-from djmoney.money import Money
+
 
 # Celery
 from celery.decorators import task
 
 # Utilities
-import jwt
-import time
 from django.utils import timezone
 from api.utils import helpers
-import re
 
 
 def send_mass_html_mail(datatuple, fail_silently=False, user=None, password=None,

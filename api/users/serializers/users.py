@@ -15,7 +15,6 @@ from rest_framework.validators import UniqueValidator
 
 # Models
 from api.users.models import User, UserLoginActivity
-from djmoney.models.fields import Money
 
 
 # Serializers
