@@ -165,23 +165,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-if 'AWS_SECRET_ACCESS_KEY' in env and 'DJANGO_AWS_STORAGE_BUCKET_NAME' in env and 'AWS_ACCESS_KEY_ID' in env:
-    AWS_STORAGE_BUCKET_NAME = env("DJANGO_AWS_STORAGE_BUCKET_NAME")
-    # STORAGES
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
-    AWS_REGION = "eu-west-1"
-    AWS_S3_ADDRESSING_STYLE = "auto"
-    AWS_QUERYSTRING_AUTH = False
-    AWS_DEFAULT_ACL = "public-read"
-    _AWS_EXPIRY = 60 * 60 * 24 * 7
-    AWS_S3_OBJECT_PARAMETERS = {
-        "CacheControl": f"max-age={_AWS_EXPIRY}, s-maxage={_AWS_EXPIRY}, must-revalidate",
-    }
-    MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
-else:
-    MEDIA_URL = "/media/"
+MEDIA_URL = "/media/"
 
 # Static  files
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -284,27 +268,10 @@ PASSWORD_HASHERS = [
 ]
 
 
-if 'SENDGRID_API_KEY' in env:
-    # Email
-    DEFAULT_FROM_EMAIL = "precognis <no-reply@precognis.com>"
-    SERVER_EMAIL = DEFAULT_FROM_EMAIL
-    EMAIL_SUBJECT_PREFIX = "DJANGO_EMAIL_SUBJECT_PREFIX"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = "localhost"
+EMAIL_PORT = 1025
 
-    # Anymail (Sendgrid)
-
-    EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
-    ANYMAIL = {"SENDGRID_API_KEY": env("SENDGRID_API_KEY")}
-else:
-    # Email
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-    EMAIL_HOST = "localhost"
-    EMAIL_PORT = 1025
-# Logging
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False.
-# See https://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -369,6 +336,3 @@ EXCHANGE_BACKEND = 'djmoney.contrib.exchange.backends.FixerBackend'
 OPEN_EXCHANGE_RATES_URL = 'https://openexchangerates.org/api/historical/2017-01-01.json?symbols=USD,EUR,NOK,SEK,CZK'
 FIXER_URL = 'http://data.fixer.io/api/2013-12-24?symbols=USD,EUR,NOK,SEK,CZK'
 
-
-# GeoIP2
-GEOIP_PATH = os.path.join(BASE_DIR, 'geolite2-db')

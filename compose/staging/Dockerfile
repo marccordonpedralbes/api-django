@@ -26,7 +26,7 @@ COPY ./compose/entrypoint /entrypoint
 RUN sed -i 's/\r//' /entrypoint
 RUN chmod +x /entrypoint
 
-COPY ./compose/prod/start /start
+COPY ./compose/staging/start /start
 RUN sed -i 's/\r//' /start
 RUN chmod +x /start
 

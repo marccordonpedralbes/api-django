@@ -1,35 +1,16 @@
-"""Users views."""
-# Django
-from operator import sub
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-
-
-# Django REST Framework
 import uuid
-
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import action
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import get_object_or_404
-from rest_framework.pagination import PageNumberPagination
-from django.http import HttpResponse
 # Permissions
 from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
-    IsAdminUser
 )
 from api.users.permissions import IsAccountOwner
 
-# Models
-from api.users.models import User, UserLoginActivity
+from api.users.models import User
 
-from djmoney.money import Money
-
-# Serializers
 from api.users.serializers import (
     UserLoginSerializer,
     UserModelSerializer,
@@ -49,17 +30,8 @@ from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 # Celery
-from api.taskapp.tasks import send_confirmation_email, send_feedback_email
+from api.taskapp.tasks import send_confirmation_email
 
-import os
-import stripe
-import json
-
-# Utils
-from api.utils import helpers
-
-from datetime import timedelta
-from django.utils import timezone
 import environ
 env = environ.Env()
 
@@ -108,12 +80,9 @@ class UserViewSet(mixins.RetrieveModelMixin,
        
         return User.objects.filter(account_deactivated=False, is_staff=False)
 
-    # User destroy
-
     def perform_destroy(self, instance):
         instance.account_deactivated = True
         instance.save()
-
 
     @action(detail=False, methods=['post'])
     def is_email_available(self, request):
@@ -125,7 +94,6 @@ class UserViewSet(mixins.RetrieveModelMixin,
         serializer.is_valid(raise_exception=True)
         email = serializer.data
         return Response(data=email, status=status.HTTP_200_OK)
-
 
     @action(detail=False, methods=['post'])
     def is_username_available(self, request):
@@ -151,7 +119,6 @@ class UserViewSet(mixins.RetrieveModelMixin,
         }
 
         return Response(data, status=status.HTTP_201_CREATED)
-
 
     @action(detail=False, methods=['get'])
     def send_verification_email(self, request):
@@ -240,7 +207,6 @@ class UserViewSet(mixins.RetrieveModelMixin,
         serializer.save()
         data = {'message': 'Verified account!'}
         return Response(data, status=status.HTTP_200_OK)
-
 
     @action(detail=False, methods=['get'])
     def get_user(self, request, *args, **kwargs):

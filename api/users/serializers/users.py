@@ -289,7 +289,6 @@ class AccountVerificationSerializer(serializers.Serializer):
 
 
 class IsEmailAvailableSerializer(serializers.Serializer):
-    """Acount verification serializer."""
 
     email = serializers.CharField()
 
@@ -303,14 +302,11 @@ class IsEmailAvailableSerializer(serializers.Serializer):
 
         return {"email": email}
 
-
 class IsCouponAvailableSerializer(serializers.Serializer):
-    """Acount verification serializer."""
 
     coupon = serializers.CharField()
 
     def validate(self, data):
-        """Update user's verified status."""
 
         coupon = data['coupon']
         stripe = self.context['stripe']
@@ -324,9 +320,7 @@ class IsCouponAvailableSerializer(serializers.Serializer):
 
         return {"coupon": coupon}
 
-
 class IsUsernameAvailableSerializer(serializers.Serializer):
-    """Acount verification serializer."""
 
     username = serializers.CharField()
 
@@ -342,7 +336,6 @@ class IsUsernameAvailableSerializer(serializers.Serializer):
 
 
 class ChangeEmailSerializer(serializers.Serializer):
-    """Acount verification serializer."""
 
     email = serializers.CharField()
 
@@ -360,7 +353,6 @@ class ChangeEmailSerializer(serializers.Serializer):
 
 
 class ValidateChangeEmail(serializers.Serializer):
-    """Acount verification serializer."""
 
     token = serializers.CharField()
 
