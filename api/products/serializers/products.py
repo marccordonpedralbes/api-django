@@ -21,5 +21,6 @@ class ProductModelSerializer(serializers.ModelSerializer):
             'id',
             'nombre',
             'descripcion',
-            'departamento'
+            'departamento',
+            'imgUrl',
         )

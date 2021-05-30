@@ -26,6 +26,7 @@ class RecipeModelSerializer(serializers.ModelSerializer):
             'descripcion',
             'duracion',
             'dificultad',
+            'recipeURL',
             'ingredientes'
         )
     
