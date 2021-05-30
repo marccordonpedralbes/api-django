@@ -26,8 +26,8 @@ class RecipeModelSerializer(serializers.ModelSerializer):
             'descripcion',
             'duracion',
             'dificultad',
-            'recipeURL',
-            'ingredientes'
+            'recipeUrl',
+            'ingredientes',
         )
     
     def get_ingredientes(self, obj):
